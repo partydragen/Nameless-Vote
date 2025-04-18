@@ -3,7 +3,7 @@
  *  Made by Partydragen
  *  https://github.com/partydragen/Vote-Module
  *  https://partydragen.com
- *  NamelessMC version 2.1.0
+ *  NamelessMC version 2.2.0
  *
  *  License: MIT
  *
@@ -17,9 +17,9 @@ class Vote_Module extends Module {
 		$this->_vote_language = $vote_language;
 
 		$name = 'Vote';
-		$author = '<a href="https://partydragen.com" target="_blank" rel="nofollow noopener">Partydragen</a>';
-		$module_version = '2.3.5';
-		$nameless_version = '2.1.0';
+		$author = '<a href="https://partydragen.com" target="_blank" rel="nofollow noopener">Partydragen</a> and my <a href="https://partydragen.com/supporters/" target="_blank">Sponsors</a>';
+		$module_version = '2.3.6';
+		$nameless_version = '2.2.0';
 
 		parent::__construct($this, $name, $author, $module_version, $nameless_version);
 
@@ -150,7 +150,7 @@ class Vote_Module extends Module {
 
                 $update_check = json_decode($update_check);
                 if (!isset($update_check->error) && !isset($update_check->no_update) && isset($update_check->new_version)) {  
-                    $smarty->assign([
+                    $template->getEngine()->addVariables([
                         'NEW_UPDATE' => (isset($update_check->urgent) && $update_check->urgent == 'true') ? $this->_vote_language->get('vote', 'new_urgent_update_available_x', ['module' => $this->getName()]) : $this->_vote_language->get('vote', 'new_update_available_x', ['module' => $this->getName()]),
                         'NEW_UPDATE_URGENT' => (isset($update_check->urgent) && $update_check->urgent == 'true'),
                         'CURRENT_VERSION' => $this->_vote_language->get('vote', 'current_version_x', ['version' => Output::getClean($this->getVersion())]),
@@ -174,7 +174,7 @@ class Vote_Module extends Module {
             if (DB::getInstance()->showTables('vote_settings')) {
                 $message = DB::getInstance()->query('SELECT * FROM nl2_vote_settings WHERE name = \'vote_message\'');
                 if ($message->count()) {
-                    Util::setSetting('vote_message', $message->first()->value, 'Vote');
+                    Settings::set('vote_message', $message->first()->value, 'Vote');
                 }
 
                 DB::getInstance()->query('DROP TABLE nl2_vote_settings');

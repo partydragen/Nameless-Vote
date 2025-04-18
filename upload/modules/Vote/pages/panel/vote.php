@@ -70,7 +70,7 @@ if (!isset($_GET['action'])) {
 					$cache->store('vote_icon', Input::get('icon'));
 
 					// Update Vote Message
-                    Util::setSetting('vote_message', Input::get('message'), 'Vote');
+                    Settings::set('vote_message', Input::get('message'), 'Vote');
 
                     Session::flash('staff_vote', $language->get('admin', 'settings_updated_successfully'));
                     Redirect::to(URL::build('/panel/vote'));
@@ -107,7 +107,7 @@ if (!isset($_GET['action'])) {
 	$cache->setCache('navbar_icons');
 	$icon = $cache->retrieve('vote_icon');
 
-	$smarty->assign([
+	$template->getEngine()->addVariables([
 		'NEW_SITE' => $vote_language->get('vote', 'new_site'),
 		'NEW_SITE_LINK' => URL::build('/panel/vote/', 'action=new'),
 		'LINK_LOCATION' => $vote_language->get('vote', 'link_location'),
@@ -122,7 +122,7 @@ if (!isset($_GET['action'])) {
 		'SITE_LIST' => $sites_array,
 		'NO_VOTE_SITES' => $vote_language->get('vote', 'no_vote_sites'),
 		'MESSAGE' => $vote_language->get('vote', 'message'),
-		'MESSAGE_VALUE' => Util::getSetting('vote_message', 'You can manage this vote module in StaffCP -> Vote', 'Vote'),
+		'MESSAGE_VALUE' => Settings::get('vote_message', 'You can manage this vote module in StaffCP -> Vote', 'Vote'),
 		'ARE_YOU_SURE' => $language->get('general', 'are_you_sure'),
 		'CONFIRM_DELETE_SITE' => $vote_language->get('vote', 'delete_site'),
 		'YES' => $language->get('general', 'yes'),
@@ -135,7 +135,7 @@ if (!isset($_GET['action'])) {
 
     $template->addJSScript(Input::createTinyEditor($language, 'InputMessage', null, false, true));
 
-	$template_file = 'vote/vote.tpl';
+	$template_file = 'vote/vote';
 } else {
 	switch ($_GET['action']) {
 		case 'new':
@@ -190,7 +190,7 @@ if (!isset($_GET['action'])) {
 				}
 			}
 
-			$smarty->assign([
+			$template->getEngine()->addVariables([
 				'NEW_SITE' => $vote_language->get('vote', 'new_site'),
 				'BACK' => $language->get('general', 'back'),
 				'BACK_LINK' => URL::build('/panel/vote'),
@@ -198,7 +198,7 @@ if (!isset($_GET['action'])) {
 				'VOTE_SITE_URL' => $vote_language->get('vote', 'vote_url'),
 			]);
 
-			$template_file = 'vote/vote_new.tpl';
+			$template_file = 'vote/vote_new';
 		break;
 		case 'edit':
 			// Get page
@@ -263,7 +263,7 @@ if (!isset($_GET['action'])) {
 				}
 			}
 
-			$smarty->assign([
+			$template->getEngine()->addVariables([
 				'EDIT_SITE' => $vote_language->get('vote', 'edit_site'),
 				'BACK' => $language->get('general', 'back'),
 				'BACK_LINK' => URL::build('/panel/vote'),
@@ -273,7 +273,7 @@ if (!isset($_GET['action'])) {
 				'VOTE_SITE_URL_VALUE' => Output::getClean($site->site),
 			]);
 
-			$template_file = 'vote/vote_edit.tpl';
+			$template_file = 'vote/vote_edit';
 		break;
 		case 'delete':
 			if (isset($_GET['id']) && is_numeric($_GET['id'])) {
@@ -300,18 +300,18 @@ if (Session::exists('staff_vote'))
 	$success = Session::flash('staff_vote');
 
 if (isset($success))
-	$smarty->assign([
+	$template->getEngine()->addVariables([
 		'SUCCESS' => $success,
 		'SUCCESS_TITLE' => $language->get('general', 'success')
 	]);
 
 if (isset($errors) && count($errors))
-	$smarty->assign([
+	$template->getEngine()->addVariables([
 		'ERRORS' => $errors,
 		'ERRORS_TITLE' => $language->get('general', 'error')
 	]);
 
-$smarty->assign([
+$template->getEngine()->addVariables([
 	'PARENT_PAGE' => PARENT_PAGE,
 	'PAGE' => PANEL_PAGE,
 	'DASHBOARD' => $language->get('admin', 'dashboard'),
@@ -325,4 +325,4 @@ $template->onPageLoad();
 require(ROOT_PATH . '/core/templates/panel_navbar.php');
 
 // Display template
-$template->displayTemplate($template_file, $smarty);
+$template->displayTemplate($template_file);

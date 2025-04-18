@@ -14,8 +14,8 @@ class Vote {
      *  Returns JSON object with information about any updates
      */
     public static function updateCheck() {
-        $current_version = Util::getSetting('nameless_version');
-        $uid = Util::getSetting('unique_id');
+        $current_version = Settings::get('nameless_version');
+        $uid = Settings::get('unique_id');
 
 		$enabled_modules = Module::getModules();
 		foreach ($enabled_modules as $enabled_item) {
